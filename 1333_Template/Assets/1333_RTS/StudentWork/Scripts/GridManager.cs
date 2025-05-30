@@ -60,27 +60,28 @@ public class GridManager : MonoBehaviour
         if (!showGrid || gridNodes == null || gridSettings == null) return;
 
 
-        
+
 
         for (int x = 0; x < gridSettings.GridSizeX; x++)
         {
             for (int y = 0; y < gridSettings.GridSizeY; y++)
-
             {
                 GridNode node = gridNodes[x, y];
-                Gizmos.color = node.Walkable ? Color.green : Color.red;
+              
+                if (node.TerrainType != null)
+                    Gizmos.color = node.TerrainType.GizmoColor;
+                else
+                    Gizmos.color = node.Walkable ? Color.green : Color.red;
+
                 Gizmos.DrawWireCube(node.WorldPosition, Vector3.one * gridSettings.NodeSize * 0.9f);
-
-
             }
-
-
         }
+
 
 
     }
 
-   
+
 
     public GridNode GetNode(int x, int y)
     {

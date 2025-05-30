@@ -38,6 +38,7 @@ public class AStarTester : MonoBehaviour
                 GridNode node = gridManager.GetNode(x, y);
                 node.Walkable = randTerrain.IsWalkable;
                 node.Weight = randTerrain.MovementCost;
+                node.TerrainType = randTerrain;
                 gridManager.SetNode(x, y, node);
             }
         }
