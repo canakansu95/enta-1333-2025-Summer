@@ -5,27 +5,28 @@ public class AStarTester : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GridManager gridManager;
-    [SerializeField] private AStarPathfinder aStarPathfinder;
+    [SerializeField] private AStarPathfinder pathfinder;
     [SerializeField] private Transform startMarker;
     [SerializeField] private Transform endMarker;
-    [SerializeField] private LineRenderer pathLineRenderer;
+    [SerializeField] private LineRenderer pathLine;
 
-    [Header("Terrain Randomization")]
-    [SerializeField] private List<TerrainType> availableTerrains;
+    [Header("Terrain Settings")]
+    [SerializeField] private List<TerrainType> terrains;
 
-    [Header("Path Debug")]
+    [Header("Debug Colors")]
     [SerializeField] private Color pathColor = Color.yellow;
     [SerializeField] private Color visitedColor = Color.blue;
     [SerializeField] private Color frontierColor = Color.cyan;
+
     private List<GridNode> lastPath;
 
-    void Start()
+    private void Start()
     {
-        RandomizeTerrain();
+        RandomizeGridTerrains();
         RunAStar();
     }
 
-    public void RandomizeTerrain() // randomizing function
+    public void RandomizeGridTerrains()
     {
         if (!gridManager.IsInitialized)
             gridManager.InitializeGrid();
@@ -34,75 +35,75 @@ public class AStarTester : MonoBehaviour
         {
             for (int y = 0; y < gridManager.GridSettings.GridSizeY; y++)
             {
-                TerrainType randTerrain = availableTerrains[Random.Range(0, availableTerrains.Count)];
+                TerrainType type = terrains[Random.Range(0, terrains.Count)];
                 GridNode node = gridManager.GetNode(x, y);
-                node.Walkable = randTerrain.IsWalkable;
-                node.Weight = randTerrain.MovementCost;
-                node.TerrainType = randTerrain;
+                node.Walkable = type.IsWalkable;
+                node.Weight = type.MovementCost;
+                node.TerrainType = type;
                 gridManager.SetNode(x, y, node);
             }
         }
     }
 
-    public void RunAStar() // same as bruteforce find path
+    public void RunAStar()
     {
-        lastPath = aStarPathfinder.FindPath(startMarker.position, endMarker.position);
-        DrawPathWithLineRenderer();
+        lastPath = pathfinder.FindPath(startMarker.position, endMarker.position);
+        DrawPathLine();
     }
 
-    private void DrawPathWithLineRenderer()
+    private void DrawPathLine()
     {
-        if (pathLineRenderer == null) return;
-        if (lastPath == null || lastPath.Count == 0)
+        if (pathLine == null || lastPath == null || lastPath.Count == 0)
         {
-            pathLineRenderer.positionCount = 0;
+            if (pathLine != null) pathLine.positionCount = 0;
             return;
         }
 
-        pathLineRenderer.positionCount = lastPath.Count;
+        pathLine.positionCount = lastPath.Count;
         for (int i = 0; i < lastPath.Count; i++)
         {
-            pathLineRenderer.SetPosition(i, lastPath[i].WorldPosition + Vector3.up * 0.05f);
+            pathLine.SetPosition(i, lastPath[i].WorldPosition + Vector3.up * 0.05f);
         }
-        pathLineRenderer.startColor = pathColor;
-        pathLineRenderer.endColor = pathColor;
+        pathLine.startColor = pathColor;
+        pathLine.endColor = pathColor;
     }
 
     private void OnDrawGizmos()
     {
-        if (gridManager == null || aStarPathfinder == null) return;    // draw visited nodes
+        if (gridManager == null || pathfinder == null) return;
 
+        // Draw visited nodes
         Gizmos.color = visitedColor;
-        foreach (var pair in aStarPathfinder.VisitedNodes)
+        foreach (var pair in pathfinder.VisitedNodes)
         {
             if (!pair.Value) continue;
             var node = gridManager.GetNode(pair.Key.x, pair.Key.y);
             Gizmos.DrawCube(node.WorldPosition, Vector3.one * gridManager.GridSettings.NodeSize * 0.4f);
         }
-        
+
+        // Draw frontier nodes
         Gizmos.color = frontierColor;
-        foreach (var pair in aStarPathfinder.FrontierNodes) //// draw frontier nodes
+        foreach (var pair in pathfinder.FrontierNodes)
         {
             if (!pair.Value) continue;
             var node = gridManager.GetNode(pair.Key.x, pair.Key.y);
             Gizmos.DrawCube(node.WorldPosition, Vector3.one * gridManager.GridSettings.NodeSize * 0.6f);
         }
-       
-        if (lastPath != null && lastPath.Count > 1) //  // draw final path
+
+        // Draw the final path
+        if (lastPath != null && lastPath.Count > 1)
         {
             Gizmos.color = pathColor;
             for (int i = 0; i < lastPath.Count - 1; i++)
-            {
                 Gizmos.DrawLine(lastPath[i].WorldPosition, lastPath[i + 1].WorldPosition);
-            }
         }
     }
 
-    void Update()
+    private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))  // pressing space to randomize terrain and rerun pathfinder
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            RandomizeTerrain();
+            RandomizeGridTerrains();
             RunAStar();
         }
     }

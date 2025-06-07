@@ -7,7 +7,8 @@ public class Pathfinder : MonoBehaviour
 {
     [SerializeField] private GridManager gridManager;
 
-   
+    public IEnumerable<object> VisitedNodes { get; internal set; }
+
     public List<GridNode> FindPath(Vector3 startPos, Vector3 endPos)  // main function to find a path between two positions
     {
         if (!gridManager.IsInitialized)
