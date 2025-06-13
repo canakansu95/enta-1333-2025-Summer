@@ -158,12 +158,8 @@ MonoBehaviour:
   markerHeight: 0.5
   defaultUnits: {fileID: 11400000, guid: 919eb96e7e37ca942a834392dd71cc65, type: 2}
   terrains:
-  - {fileID: 11400000, guid: 181a7e2acc057eb458089cc310556736, type: 2}
   - {fileID: 11400000, guid: d90e5f487a2ef4c428846d0149070176, type: 2}
   - {fileID: 11400000, guid: 03600f9e612cf1d4eb82c2f92f2b383c, type: 2}
-  pathColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  visitedColor: {r: 0, g: 0, b: 1, a: 1}
-  frontierColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!4 &1511550
 Transform:
   m_ObjectHideFlags: 0
@@ -694,9 +690,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 369c575d72653fa4a965b67d44c930d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LayoutGroupParent: {fileID: 2063226312}
-  ButtonPrefab: {fileID: 5648467042449282318, guid: f8b1a87f3523ec94185bf86bd2eba8a1, type: 3}
-  BuildingData: {fileID: 11400000, guid: cf0272c8a68ace345b507dab038c94f7, type: 2}
+  layoutGroupParent: {fileID: 2063226312}
+  buttonPrefab: {fileID: 5648467042449282318, guid: f8b1a87f3523ec94185bf86bd2eba8a1, type: 3}
+  buildingTypePrefabs:
+  - {fileID: 11400000, guid: 2d2edfea8c93c0640b4fc0f2bdfa5b14, type: 2}
+  placementController: {fileID: 2057898848}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1047,7 +1045,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1418008173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1557,7 +1555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c919f6b984f558b4589f16e1939baffa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitManager: {fileID: 913885940}
+  pathfindingTester: {fileID: 1154599954}
   spawnableUnitPrefabs:
   - unitType: {fileID: 11400000, guid: befe6cd57ccd8734697d8d83522572d2, type: 2}
     prefab: {fileID: 2881889305326821688, guid: 982b7d456810b6d4b8aa80e0ef6c11fa, type: 3}
@@ -1567,9 +1565,9 @@ MonoBehaviour:
     prefab: {fileID: 2561282132721881764, guid: 801aebebceb45d949ab432a5806438d5, type: 3}
   - unitType: {fileID: 11400000, guid: 6126d6f130e671746bcc9c6489bede49, type: 2}
     prefab: {fileID: 3568375972985305939, guid: 90cd262965d13bb43b7243c2e2684922, type: 3}
-  gridManager: {fileID: 243547184}
-  pathfinder: {fileID: 864595248}
-  pathfindingTester: {fileID: 1154599954}
+  playerArmyIndex: 0
+  enemyArmyIndex: 1
+  spawnForPlayer: 1
 --- !u!4 &1827594638
 Transform:
   m_ObjectHideFlags: 0
@@ -1580,6 +1578,56 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.653255, y: -2.6812658, z: -2.7117438}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2057898847
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2057898849}
+  - component: {fileID: 2057898848}
+  m_Layer: 0
+  m_Name: BuildingPlacementController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2057898848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2057898847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f953e935ef0f7446806e4535feb3e60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridManager: {fileID: 243547184}
+  mainCamera: {fileID: 330585545}
+  placeableBuildings:
+  - {fileID: 11400000, guid: bad6f61f8323cba42a220674fa82f142, type: 2}
+  validColor: {r: 0, g: 1, b: 0, a: 0.4}
+  invalidColor: {r: 1, g: 0, b: 0, a: 0.4}
+--- !u!4 &2057898849
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2057898847}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.16598, y: -11.747651, z: 0.3918311}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1622,7 +1670,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 50, y: 50}
-  m_SizeDelta: {x: 10, y: 10}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &2063226313
 MonoBehaviour:
@@ -1799,3 +1847,4 @@ SceneRoots:
   - {fileID: 1418008176}
   - {fileID: 37514013}
   - {fileID: 1827594638}
+  - {fileID: 2057898849}

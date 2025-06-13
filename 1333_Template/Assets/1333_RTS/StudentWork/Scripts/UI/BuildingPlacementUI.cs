@@ -1,27 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public class BuildingPlacementUI : MonoBehaviour
+using UnityEngine;
+using UnityEngine.UI;
+
+public class BuildingPlacementUI : MonoBehaviour   // displays ui buttons for each building and tells controller what to place.
 {
-    [SerializeField] private RectTransform LayoutGroupParent;
-    [SerializeField] private SelectBuildingButton ButtonPrefab;
-    [SerializeField] private BuildingType BuildingData;
-    
-    
-    
-  
+    [SerializeField] private RectTransform layoutGroupParent;
+    [SerializeField] private SelectBuildingButton buttonPrefab;
+    [SerializeField] private BuildingTypePrefab[] buildingTypePrefabs;
+    [SerializeField] private BuildingPlacementController placementController;
+
     void Start()
     {
-        foreach(BuildingData t in BuildingData.Buildings)
+        foreach (var typePrefab in buildingTypePrefabs)
         {
-
-            SelectBuildingButton button = Instantiate(ButtonPrefab, LayoutGroupParent);
-            button.Setup(t);
+            var button = Instantiate(buttonPrefab, layoutGroupParent);
+            button.Setup(typePrefab.buildingType.BuildingName, typePrefab.buildingType.BuildingIcon);
+            button.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                placementController.SetBuildingToPlace(typePrefab);
+            });
         }
-
-
     }
-
-    
 }

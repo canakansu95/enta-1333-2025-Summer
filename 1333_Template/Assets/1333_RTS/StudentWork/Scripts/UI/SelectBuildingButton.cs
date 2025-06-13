@@ -11,15 +11,12 @@ public class SelectBuildingButton : MonoBehaviour
     [SerializeField] private TMP_Text buttonText;
     [SerializeField] private Button button;
 
-    private BuildingData buildingDataForButton;
+   
 
 
-    public void Setup(BuildingData buildingData)
+    public void Setup(string buildingName, Sprite buildingIcon)
     {
-        buildingDataForButton = buildingData;
-        buttonText.text = buildingDataForButton.BuildingName;
-
-        //optional
-        buttonImage.sprite = buildingDataForButton.BuildingIcon;
+        buttonText.text = buildingName;
+        buttonImage.sprite = buildingIcon;
     }
 }
