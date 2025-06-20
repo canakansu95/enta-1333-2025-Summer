@@ -86,6 +86,11 @@ public class GridManager : MonoBehaviour
         return gridNodes[x, y];
     }
 
+    public bool IsInBounds(int x, int y)  // checker for unit spawn
+    {
+        return x >= 0 && x < gridSettings.GridSizeX && y >= 0 && y < gridSettings.GridSizeY;
+    }
+
     public bool CanPlaceBuildingAt(int startX, int startY, int width, int height) // checher if building rectangle fits into the grid
     {
         for (int dx = 0; dx < width; dx++)
@@ -99,8 +104,8 @@ public class GridManager : MonoBehaviour
              
                 if (!gridNodes[x, y].Walkable)  // walkable check
                     return false;
-                if (gridNodes[x, y].Occupied) // building occupancy check
-                    return false;
+                if (gridNodes[x, y].Occupied || gridNodes[x, y].UnitPresent) // unit/bulding check
+                    return false; ;
             }
         }
         return true;
@@ -120,6 +125,12 @@ public class GridManager : MonoBehaviour
                 gridNodes[x, y] = node;
             }
         }
+    }
+
+    public void SetUnitOccupancy(int x, int y, bool occupied, UnitInstance unit = null)
+    {
+        gridNodes[x, y].UnitPresent = occupied;
+        gridNodes[x, y].OccupyingUnit = occupied ? unit : null;
     }
 
     public Vector2Int WorldToGridIndex(Vector3 worldPos)

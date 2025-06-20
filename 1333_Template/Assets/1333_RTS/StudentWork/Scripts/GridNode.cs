@@ -11,6 +11,8 @@ public struct GridNode
     public bool Walkable;
     public int Weight;
     public TerrainType TerrainType;
-    public bool Occupied;
+    public bool Occupied; // building occupation
+    public bool UnitPresent;  // unit occupation
     public BuildingType BuildingOnNode;
+    public UnitInstance OccupyingUnit;
 }

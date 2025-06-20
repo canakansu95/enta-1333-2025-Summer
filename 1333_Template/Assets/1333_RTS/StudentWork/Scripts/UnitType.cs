@@ -4,6 +4,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "UnitType", menuName = "Game/UnitType")]   // scriptable object that defines stats and appearance for a type of unit
 public class UnitType : ScriptableObject
 {
+
+    public string UnitName; // unit properties to be seen in inspector
+    public Sprite UnitIcon;
+
+
     [SerializeField] private int width = 1;
     [SerializeField] private int height = 1;
 

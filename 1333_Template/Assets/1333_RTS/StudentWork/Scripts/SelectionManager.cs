@@ -1,16 +1,20 @@
 using System.Collections.Generic;
-using UnityEngine.Diagnostics;
 using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
 {
-    public List<UnitInstance> selectedUnits = new List<UnitInstance>(); // storing selected units from spawned instances
+    public List<UnitInstance> selectedUnits = new List<UnitInstance>();
+    public BuildingInstance selectedBuilding;
+
     private Vector2 dragStart, dragEnd;
     private bool isDragging = false;
 
+ 
+    [SerializeField] private BuildingUnitSpawnerUI buildingSpawnerUI;     // reference to UI panels 
+
     void Update()
     {
-        if (Input.GetMouseButtonDown(0)) 
+        if (Input.GetMouseButtonDown(0)) // lft mouse down
         {
             dragStart = Input.mousePosition;
             isDragging = true;
@@ -20,61 +24,81 @@ public class SelectionManager : MonoBehaviour
             dragEnd = Input.mousePosition;
             isDragging = false;
             if (Vector2.Distance(dragStart, dragEnd) < 10f)
-                SelectUnitAtMouse();
+                SelectAtMouse();
             else
                 DragSelectUnits();
         }
 
-        if (Input.GetMouseButtonDown(1)) 
+        if (Input.GetMouseButtonDown(1)) // rght click for unit move
         {
-            MoveSelectedUnits();
+            if (selectedUnits.Count > 0)
+                MoveSelectedUnits();
         }
     }
 
-    void SelectUnitAtMouse()
+    void SelectAtMouse()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);  // single selection method
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             var unit = hit.collider.GetComponent<UnitInstance>();
+            var building = hit.collider.GetComponent<BuildingInstance>();
+
+            selectedUnits.Clear();
+            selectedBuilding = null;
+            buildingSpawnerUI.Hide();
+
             if (unit)
             {
-                selectedUnits.Clear();
                 selectedUnits.Add(unit);
-                Debug.Log("SelectedOne");
+                Debug.Log("Unit selected");
+            }
+            else if (building)
+            {
+                selectedBuilding = building;
+                Debug.Log("Building selected");
+                buildingSpawnerUI.ShowForBuilding(selectedBuilding); // show ui
             }
         }
     }
 
-    void DragSelectUnits()    // calculate screen-space rectangle, loop over all UnitInstance, and add to selected units if inside
+    void DragSelectUnits()
     {
         selectedUnits.Clear();
-       
+        selectedBuilding = null;
+        buildingSpawnerUI.Hide();
+
         foreach (var unit in FindObjectsOfType<UnitInstance>())
         {
             Vector3 screenPos = Camera.main.WorldToScreenPoint(unit.transform.position);
             if (IsWithinSelectionBounds(screenPos))
                 selectedUnits.Add(unit);
-            Debug.Log("SelectedMultiple");
         }
+
+        Debug.Log("Drag selected " + selectedUnits.Count + " units.");
     }
 
     bool IsWithinSelectionBounds(Vector3 screenPosition)
     {
-        Rect rect = Utils.GetScreenRect(dragStart, dragEnd);
+        Rect rect = Utils.GetScreenRect(dragStart, dragEnd); 
         return rect.Contains(screenPosition);
     }
 
-    void MoveSelectedUnits() // right click method to move units
+    void MoveSelectedUnits()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             foreach (var unit in selectedUnits)
-            {
                 unit.SetDestination(hit.point);
-                Debug.Log("Moved");
-            }
         }
+    }
+
+  
+    public void DeselectAll()
+    {
+        selectedUnits.Clear();
+        selectedBuilding = null;
+        buildingSpawnerUI.Hide();
     }
 }
