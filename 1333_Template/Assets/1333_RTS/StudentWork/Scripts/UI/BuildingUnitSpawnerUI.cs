@@ -7,6 +7,7 @@ public class BuildingUnitSpawnerUI : MonoBehaviour
     [SerializeField] private RectTransform layoutGroupParent;
     [SerializeField] private SelectUnitButton buttonPrefab;          // a ui  button prefab for each unit type
     [SerializeField] private UnitTypePrefab[] unitTypePrefabs;       // assign all possible spawnable units here
+    [SerializeField] private AStarPathfinder pathfinder;
 
     private BuildingInstance targetBuilding;  // the currently selected building 
 
@@ -20,7 +21,7 @@ public class BuildingUnitSpawnerUI : MonoBehaviour
             button.GetComponent<Button>().onClick.AddListener(() =>
             {
                 if (targetBuilding != null)
-                    targetBuilding.SpawnUnit(unitPrefab.prefab);
+                    targetBuilding.SpawnUnit(unitPrefab.prefab, pathfinder); 
             });
         }
         gameObject.SetActive(false); // hiding it default enable only when building is selected

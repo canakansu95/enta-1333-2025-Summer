@@ -87,6 +87,7 @@ MonoBehaviour:
   animator: {fileID: 2881889305336477242}
   skinRoot: {fileID: 2881889305326821688}
   pathLine: {fileID: 2211879409454422141}
+  teamMaterial: {fileID: 2100000, guid: dccf8e44ede71db42b49378af93c5fb7, type: 2}
 --- !u!136 &1461171748239860377
 CapsuleCollider:
   m_ObjectHideFlags: 0

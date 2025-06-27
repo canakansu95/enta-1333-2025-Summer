@@ -91,7 +91,7 @@ public class GridManager : MonoBehaviour
         return x >= 0 && x < gridSettings.GridSizeX && y >= 0 && y < gridSettings.GridSizeY;
     }
 
-    public bool CanPlaceBuildingAt(int startX, int startY, int width, int height) // checher if building rectangle fits into the grid
+    public bool CanPlaceBuildingAt(int startX, int startY, int width, int height) // checker for buildingspawn
     {
         for (int dx = 0; dx < width; dx++)
         {
@@ -101,11 +101,9 @@ public class GridManager : MonoBehaviour
                 int y = startY + dy;
                 if (x < 0 || x >= gridSettings.GridSizeX || y < 0 || y >= gridSettings.GridSizeY)
                     return false;
-             
-                if (!gridNodes[x, y].Walkable)  // walkable check
+                var node = gridNodes[x, y];
+                if (node.Occupied || node.UnitPresent || !node.Walkable) 
                     return false;
-                if (gridNodes[x, y].Occupied || gridNodes[x, y].UnitPresent) // unit/bulding check
-                    return false; ;
             }
         }
         return true;

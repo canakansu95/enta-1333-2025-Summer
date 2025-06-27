@@ -88,9 +88,10 @@ public class SelectionManager : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
-        {
+        {  
             foreach (var unit in selectedUnits)
-                unit.SetDestination(hit.point);
+          
+            unit.SetDestination(hit.point);
         }
     }
 

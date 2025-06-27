@@ -49,7 +49,9 @@ public class AStarPathfinder : MonoBehaviour
             foreach (Vector2Int neighbor in GetNeighbors(current))
             {
                 GridNode node = gridManager.GetNode(neighbor.x, neighbor.y);
-                if (!node.Walkable)
+
+                
+                if (!node.Walkable || node.Occupied || node.UnitPresent )  // skip if node is not walkable, is occupied by a building or occupied by a unit
                     continue;
 
                 int tentativeGScore = gScore[current] + node.Weight;

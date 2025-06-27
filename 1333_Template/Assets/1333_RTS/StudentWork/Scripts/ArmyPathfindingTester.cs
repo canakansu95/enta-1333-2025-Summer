@@ -59,6 +59,10 @@ public class ArmyPathfindingTester : MonoBehaviour   // test scene script to set
                 unit.Initialize(pathfinder, armyMat);
                 army.Units.Add(unit);
 
+                Vector2Int spawnGrid = gridManager.WorldToGridIndex(spawnPos);
+                gridManager.SetUnitOccupancy(spawnGrid.x, spawnGrid.y, true, unit); // set unit ocupancy
+
+
                 unitStates[unit] = UnitState.Patrol;
                 patrolPoints[unit] = new Vector3[2] {
                     GetRandomPatrolPoint(spawnPos, unit.Width, unit.Height),
@@ -82,8 +86,10 @@ public class ArmyPathfindingTester : MonoBehaviour   // test scene script to set
         UnitInstance unit = go.GetComponent<UnitInstance>();
         unit.Initialize(pathfinder, armyMat);
         army.Units.Add(unit);
+        Vector2Int spawnGrid = gridManager.WorldToGridIndex(spawnPos);
+        gridManager.SetUnitOccupancy(spawnGrid.x, spawnGrid.y, true, unit);
 
-      
+
     }
 
     private Vector3 FindRandomWalkableSpot(int width, int height)     // find a random spot big enough for a unit of this size.

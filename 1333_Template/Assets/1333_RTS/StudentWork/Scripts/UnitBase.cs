@@ -17,6 +17,8 @@ public abstract class UnitBase : MonoBehaviour   // abstract base class for all 
     
     protected AStarPathfinder pathfinder;
 
+    
+
    
     protected List<GridNode> path = new();    // the current path the unit is following
 

@@ -205,7 +205,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectedUnits: []
-  selectedBuilding: {fileID: 2840247602858872291, guid: 6f65c714cef73af428dd69ce18c12b9e, type: 3}
+  selectedBuilding: {fileID: 0}
   buildingSpawnerUI: {fileID: 1976129273}
 --- !u!4 &37514013
 Transform:
@@ -1759,6 +1759,7 @@ MonoBehaviour:
   unitTypePrefabs:
   - unitType: {fileID: 11400000, guid: befe6cd57ccd8734697d8d83522572d2, type: 2}
     prefab: {fileID: 2881889305326821688, guid: 982b7d456810b6d4b8aa80e0ef6c11fa, type: 3}
+  pathfinder: {fileID: 864595248}
 --- !u!114 &1976129274
 MonoBehaviour:
   m_ObjectHideFlags: 0

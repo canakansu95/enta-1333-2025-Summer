@@ -8,17 +8,22 @@ public class UnitInstance : UnitBase   // represents a spawned, active unit in t
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject skinRoot;
     [SerializeField] private LineRenderer pathLine;
+
+
+    public Vector2Int currentGridPos;
+    private GridManager gridManager; 
     // [SerializeField] private ParticleSystem hurtFX;
 
 
     public void Initialize(AStarPathfinder assignedPathfinder, Material teamMaterial) // assign material to each unit belonging to different armies
     {
         pathfinder = assignedPathfinder;
+       
 
-        foreach (var renderer in skinRoot.GetComponentsInChildren<Renderer>())
+        foreach (Renderer renderer in skinRoot.GetComponentsInChildren<Renderer>())
         {
-          
-            var mats = renderer.materials;
+
+            Material[] mats = renderer.materials;
             for (int i = 0; i < mats.Length; i++)
             {
                 mats[i] = teamMaterial;
@@ -36,6 +41,7 @@ public class UnitInstance : UnitBase   // represents a spawned, active unit in t
         pathIndex = 0;
         moving = path != null && path.Count > 1;
         DrawPathLine();
+
     }
 
    
@@ -50,29 +56,41 @@ public class UnitInstance : UnitBase   // represents a spawned, active unit in t
         SetDestination(node);
     }
 
-    void Update()
+    void Update()  
     {
-        if (moving && path != null && pathIndex < path.Count)
+          
         {
-            Vector3 nextPoint = path[pathIndex].WorldPosition;
-            float step = 5f * Time.deltaTime; // adjust movement speed here
-            transform.position = Vector3.MoveTowards(transform.position, nextPoint, step);
-
-            if (Vector3.Distance(transform.position, nextPoint) < 0.05f)
+            if (moving && path != null && pathIndex < path.Count)    // occupancy update logic
             {
-                pathIndex++;
-                if (pathIndex >= path.Count)
+                Vector3 nextPoint = path[pathIndex].WorldPosition;
+                float step = 5f * Time.deltaTime;
+                transform.position = Vector3.MoveTowards(transform.position, nextPoint, step);
+
+           
+                if (gridManager == null)
+                    gridManager = FindObjectOfType<GridManager>(); 
+
+                Vector2Int newGridPos = gridManager.WorldToGridIndex(transform.position);
+
+                if (newGridPos != currentGridPos) 
                 {
-                    moving = false;
-                    // later I will put idle anim
-                    // if (animator) animator.SetBool("Moving", false);
+                   
+                    gridManager.SetUnitOccupancy(currentGridPos.x, currentGridPos.y, false, this);   // unset old cell
+                 
+                    gridManager.SetUnitOccupancy(newGridPos.x, newGridPos.y, true, this);     // set new cell
+                    currentGridPos = newGridPos;
                 }
+             
 
-
-
-
+                if (Vector3.Distance(transform.position, nextPoint) < 0.05f)
+                {
+                    pathIndex++;
+                    if (pathIndex >= path.Count)
+                        moving = false;
+                }
             }
         }
+
     }
 
     private void DrawPathLine() // drawing a line to show path
