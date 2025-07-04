@@ -813,6 +813,7 @@ MonoBehaviour:
   buttonPrefab: {fileID: 5648467042449282318, guid: f8b1a87f3523ec94185bf86bd2eba8a1, type: 3}
   buildingTypePrefabs:
   - {fileID: 11400000, guid: 2d2edfea8c93c0640b4fc0f2bdfa5b14, type: 2}
+  - {fileID: 11400000, guid: 602383ec402664149b46252cb4f2acbc, type: 2}
   placementController: {fileID: 2057898848}
 --- !u!1 &832575517
 GameObject:

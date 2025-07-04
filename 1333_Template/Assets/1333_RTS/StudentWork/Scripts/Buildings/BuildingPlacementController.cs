@@ -15,7 +15,7 @@ public class BuildingPlacementController : MonoBehaviour   // handles  placement
     private int overlayX, overlayY;
     private bool showOverlay;
     private bool lastValid;
-
+    private Vector2Int occupiedOrigin;
     public void SetBuildingToPlace(BuildingTypePrefab typePrefab)     // called by ui to select a building for placement
 
     {
@@ -58,9 +58,13 @@ public class BuildingPlacementController : MonoBehaviour   // handles  placement
                 GameObject obj = Instantiate(currentToPlace.prefab, placePos, currentToPlace.prefab.transform.rotation); // instantiating with -90 on x to place accordingly
 
                 var instance = obj.GetComponent<BuildingInstance>();
-                if (instance) instance.Initialize(currentToPlace.buildingType);
-
+                if (instance)
+                {
+                    instance.Initialize(currentToPlace.buildingType);
+                    instance.SetOccupiedOrigin(new Vector2Int(overlayX, overlayY));  // track the corret orgin for destruction
+                }
                 gridManager.SetBuildingOccupancy(overlayX, overlayY, width, height, true, currentToPlace.buildingType);
+
 
                 currentToPlace = null;
                 showOverlay = false;

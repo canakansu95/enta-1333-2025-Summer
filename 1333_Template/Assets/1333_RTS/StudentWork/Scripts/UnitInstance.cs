@@ -2,8 +2,24 @@ using System;
 using UnityEngine;
 
 
-public class UnitInstance : UnitBase   // represents a spawned, active unit in the scene 
+public class UnitInstance : UnitBase, IDamageable   // represents a spawned, active unit in the scene 
 {
+
+    [Header("Stats")]
+    [SerializeField] private GameObject healthBarPrefab; // assign in inspector
+    [SerializeField] private int maxHealth = 10;
+    private int currentHealth;
+    public int MaxHealth => maxHealth;
+    public int CurrentHealth => currentHealth;
+    public bool IsAlive => currentHealth > 0;
+    private bool isAlive = true;
+
+    public Transform GetTransform() => transform;
+    private HealthBarUI healthBarInstance;
+
+
+
+
     [Header("Visuals & FX")]
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject skinRoot;
@@ -11,8 +27,46 @@ public class UnitInstance : UnitBase   // represents a spawned, active unit in t
 
 
     public Vector2Int currentGridPos;
-    private GridManager gridManager; 
+    private GridManager gridManager;
     // [SerializeField] private ParticleSystem hurtFX;
+
+
+
+    void Start()    // on start, begin with max health, and healthbar spawned
+    {
+        currentHealth = maxHealth;
+        healthBarInstance = Instantiate(healthBarPrefab, transform).GetComponent<HealthBarUI>();
+        healthBarInstance.Attach(this); 
+        gridManager = FindObjectOfType<GridManager>();
+    }
+
+    public void TakeDamage(int amount) // damage function
+    {
+        currentHealth -= amount;
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+       
+        if (!isAlive) return;
+        isAlive = false;
+
+    
+        if (gridManager != null)      // removing unit occupancy from grid after death
+        {
+            Vector2Int idx = gridManager.WorldToGridIndex(transform.position);
+            gridManager.SetUnitOccupancy(idx.x, idx.y, false, null);
+        }
+
+        // later I will add there  death animation etc
+
+        Destroy(gameObject); 
+    }
+
 
 
     public void Initialize(AStarPathfinder assignedPathfinder, Material teamMaterial) // assign material to each unit belonging to different armies
@@ -66,7 +120,10 @@ public class UnitInstance : UnitBase   // represents a spawned, active unit in t
                 float step = 5f * Time.deltaTime;
                 transform.position = Vector3.MoveTowards(transform.position, nextPoint, step);
 
-           
+                if (animator && !animator.GetBool("isWalking")) // set walking anim true here
+                    animator.SetBool("isWalking", true);
+               
+
                 if (gridManager == null)
                     gridManager = FindObjectOfType<GridManager>(); 
 
@@ -86,13 +143,19 @@ public class UnitInstance : UnitBase   // represents a spawned, active unit in t
                 {
                     pathIndex++;
                     if (pathIndex >= path.Count)
+                    {
                         moving = false;
-                }
+                       
+
+                        if (animator && animator.GetBool("isWalking"))  // set walking anim false here
+                            animator.SetBool("isWalking", false);
+                           
+                    }
             }
         }
 
     }
-
+            }
     private void DrawPathLine() // drawing a line to show path
     {
         if (pathLine == null || path == null || path.Count == 0)
